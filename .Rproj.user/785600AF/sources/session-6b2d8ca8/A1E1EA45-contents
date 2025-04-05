@@ -1,0 +1,262 @@
+# Fechar dados & gráficos
+rm(list=ls())
+graphics.off()
+
+# Instalar pacotes
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("readxl")
+install.packages("plyr")
+install.packages("deaR")
+install.packages("Benchmarking")
+install.packages("ggridges")
+install.packages("ggrepel")
+install.packages("patchwork")
+install.packages("magrittr")
+install.packages("grid")
+install.packages("lpSolveAPI")
+install.packages("ucminf")
+install.packages("quadprog")
+
+# Ligar pacotes:
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(plyr)
+library(deaR)
+library(Benchmarking)
+library(ggridges)
+library(ggrepel)
+library(patchwork)
+library(magrittr)
+library(grid)
+library(lpSolveAPI)
+library(ucminf)
+library(quadprog)
+
+# dados:
+
+dados <- read_excel(file.choose())
+View(dados)
+
+
+
+######################################################################
+########## 2019
+######################################################################
+
+
+x2019 <- as.matrix(with(dados, Investimento_Educacional_medio_por_aluno_2019))
+
+y2019 <- as.matrix(with(dados, IDEB_2019))
+
+
+dea.plot.frontier(x2019,y2019,txt=TRUE)
+
+#modelos
+
+modelo2019 <- dea(x2019,y2019,RTS="vrs",ORIENTATION="out")
+
+efficiencies(modelo2019)
+
+eff <- (efficiencies(modelo2019))
+
+1/eff
+
+summary(modelo2019)
+
+escores2019 <- data.frame(dados$Capitais,eficiencia=1/(modelo2019=modelo2019$eff)*100)
+
+escores2019 %>%
+arrange(desc(eficiencia))
+
+modelo2019 <- dea(x2019,y2019,RTS="vrs",ORIENTATION="out")
+
+benchmarks2019 <- data.frame(dados$Capitais,modelo2019=modelo2019$lambda)
+
+benchmarks2019
+
+######################################################################
+########## 2021
+######################################################################
+
+# Construindo a matriz de insumos
+
+x2021 <- as.matrix(with(dados, Investimento_Educacional_medio_por_aluno_2021))
+
+y2021 <- as.matrix(with(dados, IDEB_2021))
+
+
+dea.plot.frontier(x2021,y2021,txt=TRUE)
+
+#modelos
+
+modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="out")
+
+efficiencies(modelo2021)
+
+eff <- (efficiencies(modelo2021))
+
+1/eff
+
+summary(modelo2021)
+
+escores2021 <- data.frame(dados$Capitais,eficiencia=1/(modelo2021=modelo2021$eff)*100)
+
+escores2021 %>%
+  arrange(desc(eficiencia))
+
+modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="out")
+
+benchmarks2021 <- data.frame(dados$Capitais,modelo2021=modelo2021$lambda)
+
+benchmarks2021
+
+######################################################################
+########## 2023
+######################################################################
+
+# Construindo a matriz de insumos
+
+x2023 <- as.matrix(with(dados, Investimento_Educacional_medio_por_aluno_2023))
+
+y2023 <- as.matrix(with(dados, IDEB_2023))
+
+
+dea.plot.frontier(x2023,y2023,txt=TRUE)
+
+#modelos
+
+modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="out")
+
+efficiencies(modelo2023)
+
+eff <- (efficiencies(modelo2023))
+
+1/eff
+
+summary(modelo2023)
+
+escores2023 <- data.frame(dados$Capitais,eficiencia=1/(modelo2023=modelo2023$eff)*100)
+
+escores2023 %>%
+  arrange(desc(eficiencia))
+
+modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="out")
+
+benchmarks2023 <- data.frame(dados$Capitais,modelo2023=modelo2023$lambda)
+
+benchmarks2023
+
+## Gráficos
+
+g2019 <- dados %>%
+  ggplot() +
+  geom_point(mapping = aes(x = x2019, y = y2019,colour = reg), size = 3) +
+  geom_label_repel(aes(x = x2019, y = y2019,label = cod),
+                   box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   segment.color = 'grey50') +
+  labs(
+    x = "Investimento Educacional médio por aluno (R$)",
+    y = "IDEB",
+    title = "DEA 2019") +
+  theme_classic()
+
+g2021 <- dados %>%
+  ggplot() +
+  geom_point(mapping = aes(x = x2021, y = y2021,colour = reg), size = 3) +
+  geom_label_repel(aes(x = x2021, y = y2021,label = cod),
+                   box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   segment.color = 'grey50') +
+  labs(
+    x = "Investimento Educacional médio por aluno (R$)",
+    y = "IDEB",
+    title = "DEA 2021") +
+  theme_classic()
+
+g2023 <- dados %>%
+  ggplot() +
+  geom_point(mapping = aes(x = x2023, y = y2023,colour = reg), size = 3) +
+  geom_label_repel(aes(x = x2023, y = y2023,label = cod),
+                   box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   segment.color = 'grey50') +
+  labs(
+    x = "Investimento Educacional médio por aluno (R$)",
+    y = "IDEB",
+    title = "DEA 2023") +
+  theme_classic()
+
+
+g2019
+g2021
+g2023
+
+
+# Salvando os resultados
+
+escores<-data.frame(nomes=dados$Capitais,
+               cod=dados$cod,
+               reg=dados$reg,
+               escores2019=escores2019$eficiencia,
+               escores2021=escores2021$eficiencia,
+               escores2023=escores2023$eficiencia)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+write.csv2(escores, "escores.csv", row.names = T)
+
+write.csv2(benchmarks2019, "benchmarks2019.csv", row.names = T)
+write.csv2(benchmarks2021, "benchmarks2021.csv", row.names = T)
+write.csv2(benchmarks2021, "benchmarks2023.csv", row.names = T)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+efficiencies(escores2019)
+eff <- efficiencies(escores2019)
+1/eff
+summary(escores2019, exportExcel = TRUE, filename = NULL)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+efficiencies(escores2021)
+eff <- efficiencies(escores2021)
+1/eff
+summary(escores2021, exportExcel = TRUE, filename = NULL)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+efficiencies(escores2023)
+eff <- efficiencies(escores2023)
+1/eff
+summary(escores2023, exportExcel = TRUE, filename = NULL)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+efficiencies(modelo2019)
+eff <- efficiencies(modelo2019)
+1/eff
+summary(modelo2019, exportExcel = TRUE, filename = NULL)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+efficiencies(modelo2021)
+eff <- efficiencies(modelo2021)
+1/eff
+summary(modelo2021, exportExcel = TRUE, filename = NULL)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+efficiencies(modelo2023)
+eff <- efficiencies(modelo2023)
+1/eff
+summary(modelo2023, exportExcel = TRUE, filename = NULL)
+
+setwd("C:\\Users\\kelly\\OneDrive\\1. FACULDADE\\1. TCC\\1. Orientação TCC\\0. Versão Final do TCC\\RStudio\\08.03.2025")
+
+
+
+
+
