@@ -1,7 +1,7 @@
 ################################################################################
 # Artigo: Eficiência na Educação - Municípios
 # Autore: Kelly Arruda Gomes & Yuri Cesar de Lima e Silva
-# Produto: Rodando o DEA
+# Produto: Rodando o DEA Norte
 ################################################################################
 
 # Fechar dados & gráficos
@@ -49,6 +49,9 @@ dados <- dados %>%
 # Excluindo linhas com NA
 
 dados_full <- dados[complete.cases(dados), ]
+
+dados_full <- dados_full %>%
+  filter(regiao == "Norte")
 
 ################################################################################
 ## DEA 2019
@@ -118,7 +121,7 @@ frontier2 <- bind_rows(
 
 # Gráfico
 g2019 <- ggplot(dados_full, aes(x = desp_2019, y = ideb_2019)) +
-  geom_point(aes(colour = regiao), size = 2) +
+  geom_point(aes(colour = sigla), size = 2) +
   geom_line(data = frontier2, aes(x = desp_2019, y = ideb_2019),
             color = "red", size = 1) +
   geom_label_repel(data = filter(dados_full, eficiencia == 100),
@@ -132,14 +135,14 @@ g2019 <- ggplot(dados_full, aes(x = desp_2019, y = ideb_2019)) +
     x = "Despesa média por aluno (R$)",
     y = "IDEB",
     title = "DEA 2019",
-    colour = "Região"
+    colour = "Estado"
   ) +
   theme_classic()
 
 g2019
 
 # BoxPlot
-bp2019 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
+bp2019 <- ggplot(dados_full, aes(x = sigla, y = eficiencia, fill = sigla)) +
   geom_boxplot() +
   stat_summary(fun = median, geom = "text", 
                aes(label = round(..y.., 1)),
@@ -152,13 +155,16 @@ bp2019 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
   stat_summary(fun = function(x) quantile(x, probs = 0.75), geom = "text", 
                aes(label = round(..y.., 1)),
                hjust = -1.8, vjust = -0.5, color = "black", size = 2) +
-  labs(x = "Região", y = "Eficiência", title = "Boxplot da Eficiência por Região - 2019") +
+  labs(x = "Estado", y = "Eficiência", title = "Boxplot da Eficiência por Estado - 2019") +
   theme_classic() + guides(fill = FALSE)
 
 bp2019
 ################################################################################
 ## DEA 2021
 ################################################################################
+
+# Cuidando de um possível over point:
+dados_full <- dados_full[dados_full$cod_ibge != 5212253, ]
 
 # Rodando o DEA:
 x2021 <- as.matrix(with(dados_full, desp_2021))
@@ -169,7 +175,7 @@ dea.plot.frontier(x2021,y2021,txt=TRUE)
 
 # Modelo
 
-modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="in")
+modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="out")
 
 summary(modelo2021)
 
@@ -222,11 +228,9 @@ frontier2 <- bind_rows(
   tibble(desp_2021 = max_x_total, ideb_2021 = last_y)  # extensão horizontal até o x máximo
 )
 
-# Cuidando de um possível over point:
-dados_full <- dados_full[dados_full$cod_ibge != 5212253, ]
 # Gráfico
 g2021 <- ggplot(dados_full, aes(x = desp_2021, y = ideb_2021)) +
-  geom_point(aes(colour = regiao), size = 2) +
+  geom_point(aes(colour = sigla), size = 2) +
   geom_line(data = frontier2, aes(x = desp_2021, y = ideb_2021),
             color = "red", size = 1) +
   geom_label_repel(data = filter(dados_full, eficiencia == 100),
@@ -240,14 +244,14 @@ g2021 <- ggplot(dados_full, aes(x = desp_2021, y = ideb_2021)) +
     x = "Despesa média por aluno (R$)",
     y = "IDEB",
     title = "DEA 2021",
-    colour = "Região"
+    colour = "Estado"
   ) +
   theme_classic()
 
 g2021
 
 # BoxPlot
-bp2021 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
+bp2021 <- ggplot(dados_full, aes(x = sigla, y = eficiencia, fill = sigla)) +
   geom_boxplot() +
   stat_summary(fun = median, geom = "text", 
                aes(label = round(..y.., 1)),
@@ -260,13 +264,16 @@ bp2021 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
   stat_summary(fun = function(x) quantile(x, probs = 0.75), geom = "text", 
                aes(label = round(..y.., 1)),
                hjust = -1.8, vjust = -0.5, color = "black", size = 2) +
-  labs(x = "Região", y = "Eficiência", title = "Boxplot da Eficiência por Região - 2021") +
+  labs(x = "Região", y = "Eficiência", title = "Boxplot da Eficiência por Estado - 2021") +
   theme_classic() + guides(fill = FALSE)
 
 bp2021
 ################################################################################
 ## DEA 2023
 ################################################################################
+
+# Cuidando de um possível over point:
+dados_full <- dados_full[dados_full$cod_ibge != 3170701, ]
 
 # Rodando o DEA:
 x2023 <- as.matrix(with(dados_full, desp_2023))
@@ -277,7 +284,7 @@ dea.plot.frontier(x2023,y2023,txt=TRUE)
 
 # Modelo
 
-modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="in")
+modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="out")
 
 summary(modelo2023)
 
@@ -330,11 +337,9 @@ frontier2 <- bind_rows(
   tibble(desp_2023 = max_x_total, ideb_2023 = last_y)  # extensão horizontal até o x máximo
 )
 
-# Cuidando de um possível over point:
-dados_full <- dados_full[dados_full$cod_ibge != 3170701, ]
 # Gráfico
 g2023 <- ggplot(dados_full, aes(x = desp_2023, y = ideb_2023)) +
-  geom_point(aes(colour = regiao), size = 2) +
+  geom_point(aes(colour = sigla), size = 2) +
   geom_line(data = frontier2, aes(x = desp_2023, y = ideb_2023),
             color = "red", size = 1) +
   geom_label_repel(data = filter(dados_full, eficiencia == 100),
@@ -348,14 +353,14 @@ g2023 <- ggplot(dados_full, aes(x = desp_2023, y = ideb_2023)) +
     x = "Despesa média por aluno (R$)",
     y = "IDEB",
     title = "DEA 2023",
-    colour = "Região"
+    colour = "Estado"
   ) +
   theme_classic()
 
 g2023
 
 # BoxPlot
-bp2023 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
+bp2023 <- ggplot(dados_full, aes(x = sigla, y = eficiencia, fill = sigla)) +
   geom_boxplot() +
   stat_summary(fun = median, geom = "text", 
                aes(label = round(..y.., 1)),
@@ -368,7 +373,7 @@ bp2023 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
   stat_summary(fun = function(x) quantile(x, probs = 0.75), geom = "text", 
                aes(label = round(..y.., 1)),
                hjust = -1.8, vjust = -0.5, color = "black", size = 2) +
-  labs(x = "Região", y = "Eficiência", title = "Boxplot da Eficiência por Região - 2023") +
+  labs(x = "Região", y = "Eficiência", title = "Boxplot da Eficiência por Estado - 2023") +
   theme_classic() + guides(fill = FALSE)
 
 bp2023
@@ -376,12 +381,12 @@ bp2023
 # Salvar bases
 ################################################################################
 
-write.xlsx(escores2019, "results/escores_2019.xlsx")
-write.xlsx(benchmarks2019, "results/benchmarks_2019.xlsx")
+write.xlsx(escores_norte_2019, "results/escores_2019.xlsx")
+write.xlsx(benchmarks_norte_2019, "results/benchmarks_2019.xlsx")
 
-write.xlsx(escores2021, "results/escores_2021.xlsx")
-write.xlsx(benchmarks2021, "results/benchmarks_2021.xlsx")
+write.xlsx(escores_norte_2021, "results/escores_2021.xlsx")
+write.xlsx(benchmarks_norte_2021, "results/benchmarks_2021.xlsx")
 
-write.xlsx(escores2023, "results/escores_2023.xlsx")
-write.xlsx(benchmarks2023, "results/benchmarks_2023.xlsx")
+write.xlsx(escores_norte_2023, "results/escores_2023.xlsx")
+write.xlsx(benchmarks_norte_2023, "results/benchmarks_2023.xlsx")
 
