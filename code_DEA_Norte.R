@@ -381,12 +381,12 @@ bp2023
 # Salvar bases
 ################################################################################
 
-write.xlsx(escores_norte_2019, "results/escores_2019.xlsx")
-write.xlsx(benchmarks_norte_2019, "results/benchmarks_2019.xlsx")
+write.xlsx(escores2019, "results/escores_norte_2019.xlsx")
+write.xlsx(benchmarks2019, "results/benchmarks_norte_2019.xlsx")
 
-write.xlsx(escores_norte_2021, "results/escores_2021.xlsx")
-write.xlsx(benchmarks_norte_2021, "results/benchmarks_2021.xlsx")
+write.xlsx(escores2021, "results/escores_norte_2021.xlsx")
+write.xlsx(benchmarks2021, "results/benchmarks_norte_2021.xlsx")
 
-write.xlsx(escores_norte_2023, "results/escores_2023.xlsx")
-write.xlsx(benchmarks_norte_2023, "results/benchmarks_2023.xlsx")
+write.xlsx(escores2023, "results/escores_norte_2023.xlsx")
+write.xlsx(benchmarks2023, "results/benchmarks_norte_2023.xlsx")
 
