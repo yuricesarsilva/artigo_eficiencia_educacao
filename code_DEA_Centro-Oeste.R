@@ -151,10 +151,10 @@ bp2019 <- ggplot(dados_full, aes(x = sigla, y = eficiencia, fill = sigla)) +
                size = 3) +
   stat_summary(fun = function(x) quantile(x, probs = 0.25), geom = "text", 
                aes(label = round(..y.., 1)),
-               hjust = -1.8, vjust = 1.2, color = "black", size = 2) +
+               hjust = -3, vjust = 1.2, color = "black", size = 2) +
   stat_summary(fun = function(x) quantile(x, probs = 0.75), geom = "text", 
                aes(label = round(..y.., 1)),
-               hjust = -1.8, vjust = -0.5, color = "black", size = 2) +
+               hjust = -3, vjust = -0.5, color = "black", size = 2) +
   labs(x = "Estado", y = "Eficiência", title = "Boxplot da Eficiência por Estado - 2019") +
   theme_classic() + guides(fill = FALSE)
 
@@ -260,10 +260,10 @@ bp2021 <- ggplot(dados_full, aes(x = sigla, y = eficiencia, fill = sigla)) +
                size = 3) +
   stat_summary(fun = function(x) quantile(x, probs = 0.25), geom = "text", 
                aes(label = round(..y.., 1)),
-               hjust = -1.8, vjust = 1.2, color = "black", size = 2) +
+               hjust = -3, vjust = 1.2, color = "black", size = 2) +
   stat_summary(fun = function(x) quantile(x, probs = 0.75), geom = "text", 
                aes(label = round(..y.., 1)),
-               hjust = -1.8, vjust = -0.5, color = "black", size = 2) +
+               hjust = -3, vjust = -0.5, color = "black", size = 2) +
   labs(x = "Estado", y = "Eficiência", title = "Boxplot da Eficiência por Estado - 2021") +
   theme_classic() + guides(fill = FALSE)
 
@@ -369,10 +369,10 @@ bp2023 <- ggplot(dados_full, aes(x = sigla, y = eficiencia, fill = sigla)) +
                size = 3) +
   stat_summary(fun = function(x) quantile(x, probs = 0.25), geom = "text", 
                aes(label = round(..y.., 1)),
-               hjust = -1.8, vjust = 1.2, color = "black", size = 2) +
+               hjust = -3, vjust = 1.2, color = "black", size = 2) +
   stat_summary(fun = function(x) quantile(x, probs = 0.75), geom = "text", 
                aes(label = round(..y.., 1)),
-               hjust = -1.8, vjust = -0.5, color = "black", size = 2) +
+               hjust = -3, vjust = -0.5, color = "black", size = 2) +
   labs(x = "Estado", y = "Eficiência", title = "Boxplot da Eficiência por Estado - 2023") +
   theme_classic() + guides(fill = FALSE)
 
