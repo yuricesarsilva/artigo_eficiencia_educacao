@@ -1,0 +1,39 @@
+#Note: all important notes are written with "#" symbol and commands are without "#" Symbol, then you can simply copy n Paste the following commands in your script of R-Studio 
+#first set the data file of excel to csv format, then saved the file name with "pnldea"
+#for computation package "Productivity" & "Benchmarking" is used in R-Studio, Make Sure that these packages are updated
+#then modify the time variation for each year arrange the states accordingly by that year, Note: don't arrange time according to states, numbered the states (for eg. if three states, numeber them 1, 2, 3 &  then create a row in the data file just afters the states, and also changed the dependent and independent variable names for the ease
+#I have named the independent variables "xai" "xbi" and dependent variable is "y", these all variable names are in small letters
+#Total 16 states data have taken and from period 1980 to 2014, sorry I Can't Share the data file here but you can use "usagri" data for practice with some modifications in data variable names, file names etc.
+#important note - before loading the data in R studio go to the Session showing upside in R studio, click it then set working directory choose directory (the folder where data is located)
+#then run the Benchmarking & Productivity Packeges in R-studio
+#after doing this run the following commands
+pnldea=read.csv("pnldea.csv", stringsAsFactors = FALSE) #this command is for read the data file
+Malmcrs= malm(data = pnldea, id.var = "states", time.var = "year", x.vars = c("xai", "xbi"), y.vars = c("y"), rts = "crs")
+Malmcrs
+Malmvrs= malm(data = pnldea, id.var = "states", time.var = "year", x.vars = c("xai", "xbi"), y.vars = c("y"), rts = "vrs")
+Malmvrs
+malmcrsout = malm(data=pnldea, id.var="states", time.var="year",  x.vars = c("xai", "xbi"), y.vars = c("y"), tech.reg = TRUE, rts = c("crs"), orientation = c("out"), parallel = FALSE, cores = max(1,detectCores() - 1), scaled = TRUE)
+malmcrsout
+#you will see that all panel result was not showing then I have used the following command
+options(max.print = .Machine$integer.max)
+malmcrsout$Levels
+malmcrsout$Changes 
+malmvrsout= malm(data=pnldea, id.var="states", time.var="year",  x.vars = c("xai", "xbi"), y.vars = c("y"), tech.reg = TRUE, rts = c("vrs"), orientation = c("out"), parallel = FALSE, cores = max(1,detectCores() - 1), scaled = TRUE)
+malmvrsout
+malmvrsout$Levels
+malmvrsout$Changes
+#to save the data use the sink command as I have used 
+sink("simplecrsvrs.txt")
+print(Malmcrs)
+print(Malmvrs)
+sink()
+sink("crsout.txt")
+print(malmcrsout)
+print(malmcrsout$Levels)
+print(malmcrsout$Changes)
+sink()
+sink("vrsout.txt")
+print(malmvrsout)
+print(malmvrsout$Levels)
+print(malmvrsout$Changes)
+sink()
