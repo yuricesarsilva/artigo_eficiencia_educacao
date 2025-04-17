@@ -72,7 +72,7 @@ escores2019 <- data.frame(dados_full$nome,dados_full$sigla, eficiencia=1/(modelo
 escores2019 %>%
   arrange(desc(eficiencia))
 
-modelo2019 <- dea(x2019,y2019,RTS="vrs",ORIENTATION="in")
+modelo2019 <- dea(x2019,y2019,RTS="vrs",ORIENTATION="out")
 
 benchmarks2019 <- data.frame(dados_full$nome,dados_full$sigla,modelo2019=modelo2019$lambda)
 
@@ -156,6 +156,53 @@ bp2019 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
   theme_classic() + guides(fill = FALSE)
 
 bp2019
+
+################################################################################
+# Maps
+################################################################################
+# Leia municípios (sf) e já crie o cod_ibge
+muni <- read_municipality(year = 2020) %>% 
+  mutate(cod_ibge = as.character(code_muni))
+
+# Prepare seu df de eficiência
+df_eff <- dados_full %>% 
+  mutate(cod_ibge = str_pad(as.character(cod_ibge), width = 7, pad = "0"))
+
+# Junte garantindo que o primeiro objeto é um sf
+dados_full_mapa <- muni %>% 
+  left_join(df_eff, by = "cod_ibge")
+
+# Crie a categoria de eficiência
+dados_full_mapa <- dados_full_mapa %>% 
+  mutate(cat_eficiencia = case_when(
+    eficiencia  > 90                     ~ "Muito Alta: eff > 90",
+    eficiencia  > 80  & eficiencia <= 90 ~ "Alta: 80 < eff < 90",
+    eficiencia  > 70  & eficiencia <= 80 ~ "Média Alta: 70 < eff < 80",
+    eficiencia  > 60  & eficiencia <= 70 ~ "Média: 60 < eff < 70",
+    eficiencia  > 50  & eficiencia <= 60 ~ "Média Baixa: 50 < eff < 60",
+    eficiencia  > 40  & eficiencia <= 50 ~ "Baixa: 40 < eff < 50",
+    eficiencia <= 40                    ~ "Muito Baixa: eff < 40",
+    TRUE                                 ~ NA_character_
+  )) %>% 
+  mutate(cat_eficiencia = factor(cat_eficiencia,
+                                 levels = c("Muito Alta: eff > 90",
+                                            "Alta: 80 < eff < 90",
+                                            "Média Alta: 70 < eff < 80",
+                                            "Média: 60 < eff < 70",
+                                            "Média Baixa: 50 < eff < 60",
+                                            "Baixa: 40 < eff < 50",
+                                            "Muito Baixa: eff < 40")
+  ))
+
+# Plote — agora o geometry vem junto
+ggplot(dados_full_mapa) +
+  geom_sf(aes(fill = cat_eficiencia), color = NA) +
+  scale_fill_viridis_d(option = "mako", na.value = "grey90") +
+  labs(fill     = "Eficiência",
+       title    = "DEA: Eficiência dos Municípios  - 2019") +
+  theme_void()
+
+
 ################################################################################
 ## DEA 2021
 ################################################################################
@@ -169,7 +216,7 @@ dea.plot.frontier(x2021,y2021,txt=TRUE)
 
 # Modelo
 
-modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="in")
+modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="out")
 
 summary(modelo2021)
 
@@ -178,7 +225,7 @@ escores2021 <- data.frame(dados_full$nome,dados_full$sigla, eficiencia=1/(modelo
 escores2021 %>%
   arrange(desc(eficiencia))
 
-modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="in")
+modelo2021 <- dea(x2021,y2021,RTS="vrs",ORIENTATION="out")
 
 benchmarks2021 <- data.frame(dados_full$nome,dados_full$sigla,modelo2021=modelo2021$lambda)
 
@@ -264,6 +311,54 @@ bp2021 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
   theme_classic() + guides(fill = FALSE)
 
 bp2021
+
+################################################################################
+# Maps
+################################################################################
+# Leia municípios (sf) e já crie o cod_ibge
+muni <- read_municipality(year = 2020) %>% 
+  mutate(cod_ibge = as.character(code_muni))
+
+# Prepare seu df de eficiência
+df_eff <- dados_full %>% 
+  mutate(cod_ibge = str_pad(as.character(cod_ibge), width = 7, pad = "0"))
+
+# Junte garantindo que o primeiro objeto é um sf
+dados_full_mapa <- muni %>% 
+  left_join(df_eff, by = "cod_ibge")
+
+# Crie a categoria de eficiência
+dados_full_mapa <- dados_full_mapa %>% 
+  mutate(cat_eficiencia = case_when(
+    eficiencia  > 90                     ~ "Muito Alta: eff > 90",
+    eficiencia  > 80  & eficiencia <= 90 ~ "Alta: 80 < eff < 90",
+    eficiencia  > 70  & eficiencia <= 80 ~ "Média Alta: 70 < eff < 80",
+    eficiencia  > 60  & eficiencia <= 70 ~ "Média: 60 < eff < 70",
+    eficiencia  > 50  & eficiencia <= 60 ~ "Média Baixa: 50 < eff < 60",
+    eficiencia  > 40  & eficiencia <= 50 ~ "Baixa: 40 < eff < 50",
+    eficiencia <= 40                    ~ "Muito Baixa: eff < 40",
+    TRUE                                 ~ NA_character_
+  )) %>% 
+  mutate(cat_eficiencia = factor(cat_eficiencia,
+                                 levels = c("Muito Alta: eff > 90",
+                                            "Alta: 80 < eff < 90",
+                                            "Média Alta: 70 < eff < 80",
+                                            "Média: 60 < eff < 70",
+                                            "Média Baixa: 50 < eff < 60",
+                                            "Baixa: 40 < eff < 50",
+                                            "Muito Baixa: eff < 40")
+  ))
+
+# Plote — agora o geometry vem junto
+ggplot(dados_full_mapa) +
+  geom_sf(aes(fill = cat_eficiencia), color = NA) +
+  scale_fill_viridis_d(option = "mako", na.value = "grey90") +
+  labs(fill     = "Eficiência",
+       title    = "DEA: Eficiência dos Municípios  - 2021") +
+  theme_void()
+
+
+
 ################################################################################
 ## DEA 2023
 ################################################################################
@@ -277,7 +372,7 @@ dea.plot.frontier(x2023,y2023,txt=TRUE)
 
 # Modelo
 
-modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="in")
+modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="out")
 
 summary(modelo2023)
 
@@ -286,7 +381,7 @@ escores2023 <- data.frame(dados_full$nome,dados_full$sigla, eficiencia=1/(modelo
 escores2023 %>%
   arrange(desc(eficiencia))
 
-modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="in")
+modelo2023 <- dea(x2023,y2023,RTS="vrs",ORIENTATION="out")
 
 benchmarks2023 <- data.frame(dados_full$nome,dados_full$sigla,modelo2023=modelo2023$lambda)
 
@@ -372,6 +467,52 @@ bp2023 <- ggplot(dados_full, aes(x = regiao, y = eficiencia, fill = regiao)) +
   theme_classic() + guides(fill = FALSE)
 
 bp2023
+
+################################################################################
+# Maps
+################################################################################
+# Leia municípios (sf) e já crie o cod_ibge
+muni <- read_municipality(year = 2020) %>% 
+  mutate(cod_ibge = as.character(code_muni))
+
+# Prepare seu df de eficiência
+df_eff <- dados_full %>% 
+  mutate(cod_ibge = str_pad(as.character(cod_ibge), width = 7, pad = "0"))
+
+# Junte garantindo que o primeiro objeto é um sf
+dados_full_mapa <- muni %>% 
+  left_join(df_eff, by = "cod_ibge")
+
+# Crie a categoria de eficiência
+dados_full_mapa <- dados_full_mapa %>% 
+  mutate(cat_eficiencia = case_when(
+    eficiencia  > 90                     ~ "Muito Alta: eff > 90",
+    eficiencia  > 80  & eficiencia <= 90 ~ "Alta: 80 < eff < 90",
+    eficiencia  > 70  & eficiencia <= 80 ~ "Média Alta: 70 < eff < 80",
+    eficiencia  > 60  & eficiencia <= 70 ~ "Média: 60 < eff < 70",
+    eficiencia  > 50  & eficiencia <= 60 ~ "Média Baixa: 50 < eff < 60",
+    eficiencia  > 40  & eficiencia <= 50 ~ "Baixa: 40 < eff < 50",
+    eficiencia <= 40                    ~ "Muito Baixa: eff < 40",
+    TRUE                                 ~ NA_character_
+  )) %>% 
+  mutate(cat_eficiencia = factor(cat_eficiencia,
+                                 levels = c("Muito Alta: eff > 90",
+                                            "Alta: 80 < eff < 90",
+                                            "Média Alta: 70 < eff < 80",
+                                            "Média: 60 < eff < 70",
+                                            "Média Baixa: 50 < eff < 60",
+                                            "Baixa: 40 < eff < 50",
+                                            "Muito Baixa: eff < 40")
+  ))
+
+# Plote — agora o geometry vem junto
+ggplot(dados_full_mapa) +
+  geom_sf(aes(fill = cat_eficiencia), color = NA) +
+  scale_fill_viridis_d(option = "mako", na.value = "grey90") +
+  labs(fill     = "Eficiência",
+       title    = "DEA: Eficiência dos Municípios  - 2023") +
+  theme_void()
+
 ################################################################################
 # Salvar bases
 ################################################################################

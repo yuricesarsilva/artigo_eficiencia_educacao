@@ -1,8 +1,0 @@
-data("Economy")
-data_example <- make_malmquist(datadea = Economy,
-                               nper = 5,
-                               arrangement = "horizontal",
-                               ni = 2,
-                               no = 1)
-
-str(Economy)
