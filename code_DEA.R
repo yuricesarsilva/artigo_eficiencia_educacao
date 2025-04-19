@@ -23,6 +23,9 @@ library(grid)
 library(lpSolveAPI)
 library(ucminf)
 library(quadprog)
+library(geobr)
+library(stringr)
+library(xlsx)
 
 # I) importando dados:
 
@@ -204,8 +207,49 @@ ggplot(dados_full_mapa) +
 
 
 ################################################################################
+# Salvar bases
+################################################################################
+
+write.xlsx(dados_full, "dados/dados_full_2019.xlsx")
+
+write.xlsx(escores2019, "results/escores_2019.xlsx")
+#write.xlsx(benchmarks2019, "results/benchmarks_2019.xlsx")
+
+
+################################################################################
 ## DEA 2021
 ################################################################################
+
+# Fechar dados
+rm(list=ls())
+
+# I) importando dados:
+
+dados <- read_excel("dados/dados_finais.xlsx") 
+
+# II) Organizando os dados:
+
+dados <- dados %>%
+  mutate(desp_2019 = (desp_ef_2019/mat_ef_2019)*prop_efai_2019,
+         desp_2021 = (desp_ef_2021/mat_ef_2021)*prop_efai_2021,
+         desp_2023 = (desp_ef_2023/mat_ef_2023)*prop_efai_2023)
+
+
+dados <- dados %>%
+  mutate(
+    regiao = case_when(
+      sigla %in% c("AC", "AP", "AM", "PA", "RO", "RR", "TO") ~ "Norte",
+      sigla %in% c("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE") ~ "Nordeste",
+      sigla %in% c("ES", "MG", "RJ", "SP") ~ "Sudeste",
+      sigla %in% c("PR", "RS", "SC") ~ "Sul",
+      sigla %in% c("DF", "GO", "MT", "MS") ~ "Centro-Oeste",
+      TRUE ~ NA_character_))
+
+# Excluindo linhas com NA
+
+dados_full <- dados[complete.cases(dados), ]
+
+
 
 # Rodando o DEA:
 x2021 <- as.matrix(with(dados_full, desp_2021))
@@ -358,10 +402,48 @@ ggplot(dados_full_mapa) +
   theme_void()
 
 
+################################################################################
+# Salvar bases
+################################################################################
+
+write.xlsx(dados_full, "dados/dados_full_2021.xlsx")
+
+write.xlsx(escores2021, "results/escores_2021.xlsx")
+#write.xlsx(benchmarks2021, "results/benchmarks_2021.xlsx")
 
 ################################################################################
 ## DEA 2023
 ################################################################################
+
+# Fechar dados
+rm(list=ls())
+
+# I) importando dados:
+
+dados <- read_excel("dados/dados_finais.xlsx") 
+
+# II) Organizando os dados:
+
+dados <- dados %>%
+  mutate(desp_2019 = (desp_ef_2019/mat_ef_2019)*prop_efai_2019,
+         desp_2021 = (desp_ef_2021/mat_ef_2021)*prop_efai_2021,
+         desp_2023 = (desp_ef_2023/mat_ef_2023)*prop_efai_2023)
+
+
+dados <- dados %>%
+  mutate(
+    regiao = case_when(
+      sigla %in% c("AC", "AP", "AM", "PA", "RO", "RR", "TO") ~ "Norte",
+      sigla %in% c("AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE") ~ "Nordeste",
+      sigla %in% c("ES", "MG", "RJ", "SP") ~ "Sudeste",
+      sigla %in% c("PR", "RS", "SC") ~ "Sul",
+      sigla %in% c("DF", "GO", "MT", "MS") ~ "Centro-Oeste",
+      TRUE ~ NA_character_))
+
+# Excluindo linhas com NA
+
+dados_full <- dados[complete.cases(dados), ]
+
 
 # Rodando o DEA:
 x2023 <- as.matrix(with(dados_full, desp_2023))
@@ -517,12 +599,11 @@ ggplot(dados_full_mapa) +
 # Salvar bases
 ################################################################################
 
-write.xlsx(escores2019, "results/escores_2019.xlsx")
-write.xlsx(benchmarks2019, "results/benchmarks_2019.xlsx")
-
-write.xlsx(escores2021, "results/escores_2021.xlsx")
-write.xlsx(benchmarks2021, "results/benchmarks_2021.xlsx")
+write.xlsx(dados_full, "dados/dados_full_2023.xlsx")
 
 write.xlsx(escores2023, "results/escores_2023.xlsx")
-write.xlsx(benchmarks2023, "results/benchmarks_2023.xlsx")
+#write.xlsx(benchmarks2023, "results/benchmarks_2023.xlsx")
+
+
+
 
